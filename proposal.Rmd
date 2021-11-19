@@ -1,0 +1,53 @@
+---
+title: "Project Proposal"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Group Members
+- Stanley Tzeng
+- Yi Hsuan Chang Chien
+- Steven Stehl
+- Geoffrey Xue
+- Vishnu Anand
+
+## Communication Plan
+- Means of communication:
+- Time/days during week when group will work to deadlines
+
+Deadlines:
+- November 20 (Saturday): Project proposal due
+- November 30 (Tuesday): Data description, background, and selected graph due
+  - This will be graded as a group assignment within the discussion category
+- December 7 (Tuesday): Draft of HTML document and written report due
+- December 9 (Thursday): Peer reviews due
+- December 13 (Monday). Project report due
+  - Week of December 13–15: Project oral presentations during discussion
+- This will be graded as a group assignment within the discussion category
+- December 21 (Tuesday): Final exam
+
+## Questions of Interest
+- Research questions which may be supported or refuted by data analysis
+  - Predicts or proposes relationships between some variables in study
+- Answer a limited number of questions from one or more source
+- Focus on a few focused questions
+
+## Data Source(s)
+
+## Data Description
+- Who collected the data?
+- How is data collected?
+- What are key variables in data set and what do they measure? **how do they relate to key questions?**
+- If data is sample of large population, what is larger population?
+
+## Planned Methods
+- Brief summary 
+
+## Key Graph
+- Describes which variables will be used, what type of graph will be made
+
+## Possible Model
+- Description of possible model as well as methods of inference or prediction

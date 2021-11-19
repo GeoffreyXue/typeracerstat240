@@ -1,0 +1,110 @@
+---
+title: "Project Proposal"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Group Members
+- Stanley Tzeng
+- Yi Hsuan Chang Chien
+- Steven Stehl
+- Geoffrey Xue
+- Vishnu Anand
+
+## Communication Plan
+- Means of communication:
+  - Group chat, email if necessary
+  - Zoom calls to meet and work on project
+- Time/days during week when group will work to deadlines
+  - TR: 7 - Night
+  - F: 6 - Night 
+  - SU: 3 PM - 5 PM
+
+Deadlines:
+- November 22 (Monday): Project proposal due
+- November 30 (Tuesday): Data description, background, and selected graph due
+  - This will be graded as a group assignment within the discussion category
+- December 7 (Tuesday): Draft of HTML document and written report due
+- December 9 (Thursday): Peer reviews due
+- December 13 (Monday). Project report due
+  - Week of December 13–15: Project oral presentations during discussion
+- This will be graded as a group assignment within the discussion category
+- December 21 (Tuesday): Final exam
+
+## Questions of Interest
+- Research questions which may be supported or refuted by data analysis
+  - Predicts or proposes relationships between some variables in study
+- Answer a limited number of questions from one or more source
+- Focus on a few focused questions
+
+- How do typing races affect/correlate to typing speed?
+  - How do typing races affect/correlate to accuracy?
+  - How does typing duration affect/correlate to typing speed improvement?
+- How does length of text affect typing speed?
+  - How does length of text affect accuracy?
+  
+To make these questions more specific, we can filter racers first by total texts typed and races made to get a "better" sample to answer these questions.  
+
+In the project draft, we will zone in on a specific set of players to analyze.  
+
+## Data Source(s)
+[typeracer stats](https://typeracer.com)
+See [here](https://github.com/e6f4e37l/TypeRacerStats/blob/main/TypeRacerStats/Core/Common/urls.py) for lots of potential endpoints
+
+#### Some main endpoints of interest:
+- https://typeracerdata.com/leaders?min_races=2500&min_texts=1000&sort=wpm_textbests&rank_start=6000&rank_end=6498
+- https://data.typeracer.com/games?playerId=tr:cheffray&n=2500
+
+The first will allow us to find sample users, and the other will allow us to search all races of an individual user.  
+
+## Data Description
+- Who collected the data?
+  - [typeracer](https://typeracer.com) collects the data, along with the third party, [typeracerdata](https://typeracerdata.com))
+- How is data collected?
+  - TY: After every match, a race is logged for each racer on the track for the text.
+  - TYD: Users can query their name, queried names will then have their data retrieved and agrgegated
+  - Typeracer likely collected data to keep track of potentially because of player behavior or their own anlysis
+  - Typeracerdata's data was manually queried from players, so data was aggregated there in the interest of those typeracers
+- What are key variables in data set and what do they measure? **how do they relate to key questions?**
+  - TYD: Racer - The name of the racer to be pulled
+  - TY:
+    - wpm - Words per minute on text (related to typing speed)
+    - ac - Accuracy on text (related to accuracy)
+    - t - timestamp of race (related to duration of racing)
+    - tid - text id
+    - gn - game number (Standardizing game numbers)
+    - pts - points = words/sec * words in text (related to length of text)
+- If data is sample of large population, what is larger population?
+  - We have access to all typeracers logged in typeracerdata, which is a sample of the larger typeracer population
+  - For data analysis, we will be using a sample of the typeracerdata racers
+
+## Planned Methods
+For questions that determine typing speed (and other similar ones)
+- Find a filtered sample of players, for each player:
+  - Regression model on wpm over all races by other variable of interest
+  - Get slope of wpm improvement on each player
+- Get mean, standard deviation of all player samples
+- Test against hypothesis of no wpm improvement
+  - Confidence interval with p-value determining if there is significant improvement or not
+
+This sequence can be repeated for accuracy and points
+
+For length-related tests
+- Find a filtered sample of players, for each player:
+  - Calculate text length from points for each race
+  - Regression model on length over all races by other variable of interest
+  - Same process as listed above with wpm
+
+## Key Graph(s)
+How do typing races affect/correlate to typing speed?
+- WPM/AC improvement % for each player, aggregated into boxplot OR
+- Look at start/end estimated wpm/ac based on regression model point graph OR
+- Graph showing wpm improvement density
+
+## Possible Model
+- Description of possible model as well as methods of inference or prediction
+- Linear model for regression
+- Probability/density model for confidence interval testing
