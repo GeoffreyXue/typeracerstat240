@@ -33,7 +33,7 @@ http://typeracerdata.com/leaders?
 ### Useful Links
 - https://medium.com/@traffordDataLab/querying-apis-in-r-39029b73d5f1
 - https://www.r-bloggers.com/2020/04/scrape-html-table-using-rvest/
-- https://blog.revolutionanalytics.com/2009/02/how-to-choose-a-random-number-in-r.html
+- https://stackoverflow.com/questions/43926349/scraping-html-table-and-its-href-links-in-r
 
 #### Variables
 
