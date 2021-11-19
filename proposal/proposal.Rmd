@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - Time/days during week when group will work to deadlines
   - TR: 7 - Night
   - F: 6 - Night 
-  - SU: 3 PM - 5 PM
+  - SU: 2 PM - 4 PM
 
 Deadlines:
 - November 22 (Monday): Project proposal due
