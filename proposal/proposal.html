@@ -181,25 +181,20 @@ pre code {
 <div id="communication-plan" class="section level2">
 <h2>Communication Plan</h2>
 <ul>
-<li>Means of communication:</li>
-<li>Time/days during week when group will work to deadlines</li>
-</ul>
-<p>Deadlines:</p>
+<li>Means of communication:
 <ul>
-<li>November 20 (Saturday): Project proposal due</li>
-<li>November 30 (Tuesday): Data description, background, and selected graph due
-<ul>
-<li>This will be graded as a group assignment within the discussion category</li>
+<li>Group chat, email if necessary</li>
+<li>Zoom calls to meet and work on project</li>
+<li>Github to share files</li>
 </ul></li>
-<li>December 7 (Tuesday): Draft of HTML document and written report due</li>
-<li>December 9 (Thursday): Peer reviews due</li>
-<li>December 13 (Monday). Project report due
+<li>Time/days during week when group will work to deadlines
 <ul>
-<li>Week of December 13–15: Project oral presentations during discussion</li>
+<li>TR: 7 - Night</li>
+<li>F: 6 - Night</li>
+<li>SU: 3 PM - 5 PM</li>
 </ul></li>
-<li>This will be graded as a group assignment within the discussion category</li>
-<li>December 21 (Tuesday): Final exam</li>
 </ul>
+<p>Deadlines: - November 22 (Monday): Project proposal due - November 30 (Tuesday): Data description, background, and selected graph due - This will be graded as a group assignment within the discussion category - December 7 (Tuesday): Draft of HTML document and written report due - December 9 (Thursday): Peer reviews due - December 13 (Monday). Project report due - Week of December 13–15: Project oral presentations during discussion - This will be graded as a group assignment within the discussion category - December 21 (Tuesday): Final exam</p>
 </div>
 <div id="questions-of-interest" class="section level2">
 <h2>Questions of Interest</h2>
@@ -220,6 +215,8 @@ pre code {
 <li>How does length of text affect accuracy?</li>
 </ul></li>
 </ul>
+<p>To make these questions more specific, we can filter racers first by total texts typed and races made to get a “better” sample to answer these questions.</p>
+<p>In the project draft, we will zone in on a specific set of players to analyze.</p>
 </div>
 <div id="data-sources" class="section level2">
 <h2>Data Source(s)</h2>
@@ -236,28 +233,84 @@ pre code {
 <div id="data-description" class="section level2">
 <h2>Data Description</h2>
 <ul>
-<li>Who collected the data?</li>
-<li>How is data collected?</li>
-<li>What are key variables in data set and what do they measure? <strong>how do they relate to key questions?</strong></li>
-<li>If data is sample of large population, what is larger population?</li>
+<li>Who collected the data?
+<ul>
+<li><a href="https://typeracer.com">typeracer</a> collects the data, along with the third party, <a href="https://typeracerdata.com">typeracerdata</a>)</li>
+</ul></li>
+<li>How is data collected?
+<ul>
+<li>TY: After every match, a race is logged for each racer on the track for the text.</li>
+<li>TYD: Users can query their name, queried names will then have their data retrieved and agrgegated</li>
+<li>Typeracer likely collected data to keep track of potentially because of player behavior or their own anlysis</li>
+<li>Typeracerdata’s data was manually queried from players, so data was aggregated there in the interest of those typeracers</li>
+</ul></li>
+<li>What are key variables in data set and what do they measure? <strong>how do they relate to key questions?</strong>
+<ul>
+<li>TYD: Racer - The name of the racer to be pulled</li>
+<li>TY:
+<ul>
+<li>wpm - Words per minute on text (related to typing speed)</li>
+<li>ac - Accuracy on text (related to accuracy)</li>
+<li>t - timestamp of race (related to duration of racing)</li>
+<li>tid - text id</li>
+<li>gn - game number (Standardizing game numbers)</li>
+<li>pts - points = words/sec * words in text (related to length of text)</li>
+</ul></li>
+</ul></li>
+<li>If data is sample of large population, what is larger population?
+<ul>
+<li>We have access to all typeracers logged in typeracerdata, which is a sample of the larger typeracer population</li>
+<li>For data analysis, we will be using a sample of the typeracerdata racers</li>
+</ul></li>
 </ul>
 </div>
 <div id="planned-methods" class="section level2">
 <h2>Planned Methods</h2>
+<div id="for-questions-that-determine-typing-speed-and-other-similar-ones" class="section level5">
+<h5>For questions that determine typing speed (and other similar ones)</h5>
 <ul>
-<li>Brief summary</li>
+<li>Find a filtered sample of players, for each player:
+<ul>
+<li>Regression model on wpm over all races by other variable of interest</li>
+<li>Get slope of wpm improvement on each player</li>
+</ul></li>
+<li>Get mean, standard deviation of all player samples</li>
+<li>Test against hypothesis of no wpm improvement
+<ul>
+<li>Confidence interval with p-value determining if there is significant improvement or not</li>
+</ul></li>
+</ul>
+<p>This sequence can be repeated for accuracy and points</p>
+</div>
+<div id="for-length-related-tests" class="section level5">
+<h5>For length-related tests</h5>
+<ul>
+<li>Find a filtered sample of players, for each player:
+<ul>
+<li>Calculate text length from points for each race</li>
+<li>Regression model on length over all races by other variable of interest</li>
+<li>Same process as listed above with wpm</li>
+</ul></li>
 </ul>
 </div>
-<div id="key-graph" class="section level2">
-<h2>Key Graph</h2>
+</div>
+<div id="key-graphs" class="section level2">
+<h2>Key Graph(s)</h2>
+<div id="how-do-typing-races-affectcorrelate-to-typing-speed" class="section level5">
+<h5>How do typing races affect/correlate to typing speed?</h5>
 <ul>
-<li>Describes which variables will be used, what type of graph will be made</li>
+<li>WPM/AC improvement % for each player, aggregated into boxplot OR</li>
+<li>Look at start/end estimated wpm/ac based on regression model point graph OR</li>
+<li>Graph showing wpm improvement density</li>
 </ul>
+</div>
 </div>
 <div id="possible-model" class="section level2">
 <h2>Possible Model</h2>
 <ul>
 <li>Description of possible model as well as methods of inference or prediction</li>
+<li>Linear model for regression</li>
+<li>Probability/density model for confidence interval testing</li>
 </ul>
 </div>
 

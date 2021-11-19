@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - Means of communication:
   - Group chat, email if necessary
   - Zoom calls to meet and work on project
+  - Github to share files
 - Time/days during week when group will work to deadlines
   - TR: 7 - Night
   - F: 6 - Night 
@@ -82,7 +83,7 @@ The first will allow us to find sample users, and the other will allow us to sea
   - For data analysis, we will be using a sample of the typeracerdata racers
 
 ## Planned Methods
-For questions that determine typing speed (and other similar ones)
+##### For questions that determine typing speed (and other similar ones)
 - Find a filtered sample of players, for each player:
   - Regression model on wpm over all races by other variable of interest
   - Get slope of wpm improvement on each player
@@ -92,14 +93,14 @@ For questions that determine typing speed (and other similar ones)
 
 This sequence can be repeated for accuracy and points
 
-For length-related tests
+##### For length-related tests
 - Find a filtered sample of players, for each player:
   - Calculate text length from points for each race
   - Regression model on length over all races by other variable of interest
   - Same process as listed above with wpm
 
 ## Key Graph(s)
-How do typing races affect/correlate to typing speed?
+##### How do typing races affect/correlate to typing speed?
 - WPM/AC improvement % for each player, aggregated into boxplot OR
 - Look at start/end estimated wpm/ac based on regression model point graph OR
 - Graph showing wpm improvement density
