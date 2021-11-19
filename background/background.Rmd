@@ -1,0 +1,16 @@
+---
+title: "background"
+output: html_document
+---
+
+Due Nov 30: Data description, background, and selected graph due
+
+### Data Description
+
+### Background
+- describe the questions of interest
+- necessary background to understand the questions in context
+- description of key variables
+- graph with labels/title with evidence in data that addresses one specific key question
+
+

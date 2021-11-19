@@ -1,0 +1,3 @@
+unnamed-chunk-1	list
+unnamed-chunk-2	$	%>%	[[	GET	head	html_attr	html_nodes	html_table	mutate	parameters	parse_number	path	Racer	races	Races	read_html	rename	select	str_extract	str_sub	texts	Texts
+unnamed-chunk-3	%>%	&	<	>	filter	racer	racers	races	races_max	races_min	select	slice_sample	texts	texts_min	write_csv

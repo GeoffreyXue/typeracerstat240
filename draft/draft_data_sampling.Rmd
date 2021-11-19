@@ -1,0 +1,115 @@
+---
+title: "Draft - Data Sampling"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE,
+                      cache=TRUE, autodep=TRUE, cache.comments=FALSE)
+library(tidyverse)
+library(httr)
+library(rvest)
+```
+
+### Overview
+- Determine filter for users based on certain number of races and text raced
+- Save usernames in file for secondary query
+
+##### Endpoint used:
+http://typeracerdata.com/leaders?  
+
+- min_races = minimum number of races for players
+- min_texts = minimum number of texts for players
+- rank_start = offset of data at start
+- rank_end = offset of data at end
+  - rank_start and rank_end together provide range
+- sort = Sort by:
+  - races (races) <-- Will use this sort 
+  - points (points)
+  - textbests (wpm_textbests)
+  - textstyped (texts_raced)
+  - toptens (toptens)
+  
+### Useful Links
+- https://medium.com/@traffordDataLab/querying-apis-in-r-39029b73d5f1
+- https://www.r-bloggers.com/2020/04/scrape-html-table-using-rvest/
+- https://blog.revolutionanalytics.com/2009/02/how-to-choose-a-random-number-in-r.html
+
+#### Variables
+
+```{r}
+races_min = 2500
+races_max = 3000
+texts_min = 1000
+racers = 100
+
+path = "http://typeracerdata.com/leaders";
+# Some parameters like the min/maxes can be filtered in R, but filtering
+# helps reduce the initial data set received from the GET request
+parameters = list(
+  min_races = races_min,
+  min_texts = texts_min,
+  rank_start = 0,
+  # Arbitrary large number to pull all data. If rank_end is not specified,
+  # the amount returned defaults to 50. There are only ~16k users logged
+  # in typeracerdata, so this number guarantees full retrieval
+  rank_end = 20000,
+  sort = "races"
+)
+```
+
+### HTTP Fetch, convert to tibble
+
+The racer names shown are show the nickname followed by their true name in parentheses. Many users have nicknames too long, and the true name is truncated with dots, so unfortunately we cannot use those racer names. 
+
+However, each name does possess an href tag with their full true name. I can first get those, get the rest of the table, and replace the names
+
+```{r}
+request = GET(url = path, query = parameters)
+
+request$status_code
+
+table_html = read_html(request)
+
+# Getting names from href tags
+names = table_html %>% 
+  html_nodes(xpath = "//td/a") %>% 
+  html_attr("href") %>% 
+  str_extract("\\=.*$") %>% 
+  str_sub(2)
+
+head(names)
+
+# Parsing rest of the table
+table = table_html %>% html_table(fill = TRUE)
+table = table[[1]]
+
+table = table %>% 
+  select(Racer, Races, Texts) %>% 
+  rename(
+    racer = Racer,
+    races = Races,
+    texts = Texts
+  ) %>% 
+  mutate(
+    racer = names,
+    races = parse_number(races),
+    texts = parse_number(texts)
+  )
+
+head(table)
+
+```
+
+### Filter data, random sampling of names, store in csv
+```{r}
+table = table %>% 
+  # Some of these are redundant
+  filter(races < races_max & races > races_min & texts > texts_min) %>% 
+  select(racer, races) %>% 
+  slice_sample(n = racers)
+
+table
+
+write_csv(table, "names.csv")
+```
