@@ -55,21 +55,20 @@ store_races = function(id, races)
   
   # Write to csv in race_log folder with id
   write_csv(races, str_c("race_log/", id, ".csv"))
+  
+  # Prevent too many queries at once
+  Sys.sleep(5)
 
   return ( NULL )
-}
-
-test = function(x, y) {
-  t = str_c(x, y)
-  print(t)
 }
 ```
 
 ### Iterate through names and log all races
-``` {r}
+``` {r eval = FALSE}
 names = read_csv("names.csv")
 
 for (i in seq_len(nrow(names))) {
   store_races(names$racer[i], names$races[i])
+  print(i)
 }
 ```

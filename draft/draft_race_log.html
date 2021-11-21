@@ -171,7 +171,8 @@ pre code {
 <div id="overview" class="section level3">
 <h3>Overview</h3>
 <ul>
-<li>Given a csv of racer names and races, get all races from each racer and log them individually in csv files</li>
+<li>Grab csv of race names and races</li>
+<li>Get all races from each racer and log them individually in csv files</li>
 </ul>
 <div id="endpoint-used" class="section level5">
 <h5>Endpoint used:</h5>
@@ -181,6 +182,60 @@ pre code {
 <li>n = number of races to grab (in this case all)</li>
 </ul>
 </div>
+</div>
+<div id="useful-links" class="section level3">
+<h3>Useful Links</h3>
+<ul>
+<li><a href="https://robotwealth.com/how-to-wrangle-json-data-in-r-with-jsonlite-purr-and-dplyr/" class="uri">https://robotwealth.com/how-to-wrangle-json-data-in-r-with-jsonlite-purr-and-dplyr/</a></li>
+</ul>
+</div>
+<div id="function-to-log-race" class="section level3">
+<h3>Function to Log Race</h3>
+<pre class="r"><code>store_races = function(id, races)
+{
+  # Endpoint will feed in id and total races
+  path = &quot;https://data.typeracer.com/games&quot;;
+  parameters = list(
+    playerId = str_c(&quot;tr:&quot;, id),
+    n = races
+  )
+  
+  request = GET(url = path, query = parameters)
+  
+  # Convert request json to tibble, some renaming for clarity
+  # General data cleanup, removing uneeded columns and converting datetimes
+  races = as_tibble(fromJSON(content(request, &#39;text&#39;))) %&gt;% 
+    rename(
+      accuracy = ac,
+      time = t,
+      game_num = gn,
+      racers_num = np,
+      points = pts
+    ) %&gt;% 
+    select(everything(), -r, -sl, -tid) %&gt;% 
+    mutate(time = as_datetime(time))
+  
+  # Write to csv in race_log folder with id
+  write_csv(races, str_c(&quot;race_log/&quot;, id, &quot;.csv&quot;))
+  
+  # Prevent too many queries at once
+  Sys.sleep(5)
+
+  return ( NULL )
+}
+
+test = function(x, y) {
+  t = str_c(x, y)
+  print(t)
+}</code></pre>
+</div>
+<div id="iterate-through-names-and-log-all-races" class="section level3">
+<h3>Iterate through names and log all races</h3>
+<pre class="r"><code>names = read_csv(&quot;names.csv&quot;)
+
+for (i in seq_len(nrow(names))) {
+  store_races(names$racer[i], names$races[i])
+}</code></pre>
 </div>
 
 
