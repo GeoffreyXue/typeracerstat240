@@ -1,0 +1,75 @@
+---
+title: "Draft - Race Log"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE,
+                      cache=TRUE, autodep=TRUE, cache.comments=FALSE)
+library(tidyverse)
+library(httr)
+library(rvest)
+library(jsonlite)
+library(lubridate)
+```
+
+### Overview
+- Grab csv of race names and races
+- Get all races from each racer and log them individually in csv files
+
+##### Endpoint used:
+https://data.typeracer.com/games?
+
+- playerId=tr:**id** - id = player name
+- n = number of races to grab (in this case all)
+
+### Useful Links
+- https://robotwealth.com/how-to-wrangle-json-data-in-r-with-jsonlite-purr-and-dplyr/
+
+### Function to Log Race
+
+``` {r}
+store_races = function(id, races)
+{
+  # Endpoint will feed in id and total races
+  path = "https://data.typeracer.com/games";
+  parameters = list(
+    playerId = str_c("tr:", id),
+    n = races
+  )
+  
+  request = GET(url = path, query = parameters)
+  
+  # Convert request json to tibble, some renaming for clarity
+  # General data cleanup, removing uneeded columns and converting datetimes
+  races = as_tibble(fromJSON(content(request, 'text'))) %>% 
+    rename(
+      accuracy = ac,
+      time = t,
+      game_num = gn,
+      racers_num = np,
+      points = pts
+    ) %>% 
+    select(everything(), -r, -sl, -tid) %>% 
+    mutate(time = as_datetime(time))
+  
+  # Write to csv in race_log folder with id
+  write_csv(races, str_c("race_log/", id, ".csv"))
+
+  return ( NULL )
+}
+
+test = function(x, y) {
+  t = str_c(x, y)
+  print(t)
+}
+```
+
+### Iterate through names and log all races
+``` {r}
+names = read_csv("names.csv")
+
+for (i in seq_len(nrow(names))) {
+  store_races(names$racer[i], names$races[i])
+}
+```
