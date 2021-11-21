@@ -38,35 +38,43 @@ store_races = function(id, races)
     n = races
   )
   
-  request = GET(url = path, query = parameters)
+  tryCatch(
+    {
+      request = GET(url = path, query = parameters)
   
-  # Convert request json to tibble, some renaming for clarity
-  # General data cleanup, removing uneeded columns and converting datetimes
-  races = as_tibble(fromJSON(content(request, 'text'))) %>% 
-    rename(
-      accuracy = ac,
-      time = t,
-      game_num = gn,
-      racers_num = np,
-      points = pts
-    ) %>% 
-    select(everything(), -r, -sl, -tid) %>% 
-    mutate(time = as_datetime(time))
+      # Convert request json to tibble, some renaming for clarity
+      # General data cleanup, removing uneeded columns and converting datetimes
+      races = as_tibble(fromJSON(content(request, 'text'))) %>% 
+        rename(
+          accuracy = ac,
+          time = t,
+          game_num = gn,
+          racers_num = np,
+          points = pts
+        ) %>% 
+        select(everything(), -r, -sl, -tid) %>% 
+        mutate(time = as_datetime(time))
+      
+      # Write to csv in race_log folder with id
+      write_csv(races, str_c("race_log/", id, ".csv"))
+    },
+    error = function(e) {
+      # If encounters error with parsing, then sleep for 60 seconds and try again
+      print(str_c("error with ", id))
+      print(e)
+      Sys.sleep(60)
+      store_races(id, races)
+    }
+  )
   
-  # Write to csv in race_log folder with id
-  write_csv(races, str_c("race_log/", id, ".csv"))
-  
-  # Prevent too many queries at once
-  Sys.sleep(5)
-
   return ( NULL )
 }
 ```
 
 ### Iterate through names and log all races
 ``` {r eval = FALSE}
+# Currently at 60/100
 names = read_csv("names.csv")
-
 for (i in seq_len(nrow(names))) {
   store_races(names$racer[i], names$races[i])
   print(i)
