@@ -41,15 +41,19 @@ Deadlines:
 - Answer a limited number of questions from one or more source
 - Focus on a few focused questions
 
+For racers who have played a moderate number of games:
 - How do typing races affect/correlate to typing speed?
   - How do typing races affect/correlate to accuracy?
-  - How does typing duration affect/correlate to typing speed improvement?
+  - How does time spent on typing software affect/correlate to typing speed improvement?
 - How does length of text affect typing speed?
   - How does length of text affect accuracy?
   
 To make these questions more specific, we can filter racers first by total texts typed and races made to get a "better" sample to answer these questions.  
 
-In the project draft, we will zone in on a specific set of players to analyze.  
+In the project draft, we will zone in on a specific set of players to analyze. 
+
+If we have more time, we can also analyze the below question:
+How do the total number of races affect the total typing speed improvement?
 
 ## Data Source(s)
 [typeracer stats](https://typeracer.com)

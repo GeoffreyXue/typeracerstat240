@@ -181,6 +181,61 @@ pre code {
 <li>graph with labels/title with evidence in data that addresses one specific key question</li>
 </ul>
 </div>
+<div id="questions-of-interest" class="section level3">
+<h3>Questions of Interest</h3>
+<p>Our questions of interest focus on a group of racers who have played a moderate number of races.</p>
+<ul>
+<li>How has typing improved over the span of the races? To do this, we can explore the relationship between typing speed and accuracy to the total races played.</li>
+<li>How does time spent on typing software correlate to typing speed improvement?</li>
+<li>How does text length impact typing?</li>
+</ul>
+</div>
+<div id="background-context-for-questions-and-data" class="section level3">
+<h3>Background Context for Questions and Data</h3>
+<p>Today, we spend a significant portion of time on our computers, typing as our main method of input. As a collective, we were interested in exploring patterns of typing and typing habits. In grade school, we all used to learn how to type on different typing software tools, with the overall goal of getting “better” at typing. Our questions of interest are centered around this claim of getting “better” at typing through use of typing software like <strong>typeracer</strong>.</p>
+<p><strong>typeracer</strong> is an online typing training tool, where you race against other typists on “text tracks”. For every game, a random quote/paragraph is selected for the race, and racers are challenged to type the excerpt as fast as possible. Over time, racers build up a history of typing on hundreds or thousands of texts, accumulating data and a log of typing records.</p>
+<p>Every time a racer races, typeracer will log that race, along with some statistics, and tie that with your account. This provides a method for racers to review their performance over time, but also generates an effective dataset for analysis. Our questions of interest will primarily use lists of these races and the associated data logged.</p>
+<p>Despite the fact that typeracer maintains this list of races for each player, there is no publicly available list of players. To solve this, we are utilizing a third-party website, <strong>typeracerdata</strong>, that aggregates and logs racer names and some associated statistics for us. Players can manually enter themselves into <strong>typeracerdata</strong> and then can query themselves for updates.</p>
+<p>To answer our questions of interest, we will first filter names of typists from <strong>typeracerdata</strong> based on a variety of variables (race, texts, etc.), and then individually query each name for their races from <strong>typeracer</strong>.</p>
+<p>Next, we’ll address each of our questions of interest:</p>
+<div id="how-has-typing-improved-over-the-span-of-the-races" class="section level5">
+<h5>How has typing improved over the span of the races?</h5>
+<ul>
+<li>This is a general question that challenges whether or not typing software is an effective method of improving typing. Words per minute and accuracy are often indicators of improvement.</li>
+</ul>
+</div>
+<div id="how-does-overall-time-spent-on-typing-software-correlate-to-typing-speed-improvement" class="section level5">
+<h5>How does overall time spent on typing software correlate to typing speed improvement?</h5>
+<ul>
+<li>People often correlate move overall time spent on improving typing on typing software to typing speed improvement. We wanted to challenge whether this was true. This contrasts our initial question, as it focuses on the overall typing time and ignores typing race density as a factor.</li>
+</ul>
+</div>
+<div id="how-does-text-length-impact-typing" class="section level5">
+<h5>How does text length impact typing?</h5>
+<ul>
+<li>Anecdotally, typing longer texts lowers the speed typed. Was this true in the context of a typing software?</li>
+</ul>
+</div>
+</div>
+<div id="description-of-key-variables" class="section level3">
+<h3>Description of Key Variables</h3>
+<p>As stated above, we will use <strong>typeracerdata</strong> to filter names based on a variety of variables. The data from <strong>typeracerdata</strong> will have</p>
+<ul>
+<li><em>name</em> - id of typist, or their true name (this distinction is important because every typist also as a nickname only for display)</li>
+<li><em>races</em> - total number of races typed</li>
+<li><em>texts</em> - total number of unique texts typed</li>
+<li><em>career</em> - career words per minute (wpm) typed, or the average wpm over all races</li>
+</ul>
+<p>After getting the names (ids) of typists from <strong>typeracerdata</strong>, we’ll then query <strong>typeracer</strong> for their race logs. Each race will have</p>
+<ul>
+<li><em>wpm</em> - Words per minute on text (related to typing speed)</li>
+<li><em>ac</em> - Accuracy on text (related to accuracy)</li>
+<li><em>t</em> - timestamp of race (related to duration of racing)</li>
+<li><em>tid</em> - text id</li>
+<li><em>gn</em> - game number (Standardizing game numbers)</li>
+<li><em>pts</em> - points = words/sec * words in text (related to length of text)</li>
+</ul>
+</div>
 
 
 
