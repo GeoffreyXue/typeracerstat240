@@ -73,8 +73,12 @@ More specifically, we'll be looking at estimated words per minute improvement ov
 
 First, our sample data from typeracerdata will be filtered as follows
 - total races - 2500 to 3000
-- minimum unique texts - 500
+- minimum unique texts - 1000
 - total racers in sample - 100
 
 We chose these numbers arbitrarily, and these are subject to change. We chose racers with at least 2500 to 3000 races at at least 1000 unique texts to ensure that these racers sampled had raced moderate amount. We also chose 500 minimum unique texts to reduce the premium repeat-text issue mentioned above.
+
+This sample satisfies the three conditions of random, independence, and CLT normal distribution. This sample was randomly selected out of a population using `slice_sample`. Independence is met because the total sample is less than 10% of the population (1.1k vs 100). CLT normal distribution is met since the sample is greater than 30 (100).
+
+
 
