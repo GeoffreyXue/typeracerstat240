@@ -96,13 +96,14 @@ This graph is related to our first question - How has typing improved over the s
 More specifically, we'll be looking at estimated words per minute improvement over the span of all races.
 
 First, our sample data from typeracerdata will be filtered as follows
+
 - total races - 2500 to 3000
 - minimum unique texts - 500
 - total racers in sample - 100
 
 We chose these numbers arbitrarily, and these are subject to change. We chose racers with at least 2500 to 3000 races at at least 500 unique texts to ensure that these racers sampled had raced a moderate amount. We also chose 500 minimum unique texts to reduce the premium repeat-text issue mentioned above.
 
-This sample satisfies the three conditions of random, independence, and CLT normal distribution. This sample was randomly selected out of a population using `slice_sample`. Independence is met because the total sample is less than 10% of the population (1.1k vs 100). CLT normal distribution is met since the sample is greater than 30 (100).  
+This sample satisfies the three conditions of random, independence, and CLT normal distribution. This sample was randomly selected out of a population using `slice_sample`. Independence is met because the total sample is less than 10% of the population ([~1.6k](https://typeracerdata.com/leaders?min_races=2500&min_texts=500&sort=races&rank_start=6514&rank_end=8094) vs 100). CLT normal distribution is met since the sample is greater than 30 (100).  
 
 After getting sample racers for data and querying all of their races in other rmd files, we aggregated all of these races in the `all_races.csv` file. You can find these processes in our [github](https://github.com/GeoffreyXue/typeracerstat240) in the `draft_race_log.rmd` and `draft_data_sampling.rmd` file in the `draft` folder. 
 

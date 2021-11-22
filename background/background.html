@@ -261,9 +261,14 @@ pre code {
 <h3>Graph</h3>
 <p>This graph is related to our first question - How has typing improved over the span of the races?</p>
 <p>More specifically, we’ll be looking at estimated words per minute improvement over the span of all races.</p>
-<p>First, our sample data from typeracerdata will be filtered as follows - total races - 2500 to 3000 - minimum unique texts - 500 - total racers in sample - 100</p>
+<p>First, our sample data from typeracerdata will be filtered as follows</p>
+<ul>
+<li>total races - 2500 to 3000</li>
+<li>minimum unique texts - 500</li>
+<li>total racers in sample - 100</li>
+</ul>
 <p>We chose these numbers arbitrarily, and these are subject to change. We chose racers with at least 2500 to 3000 races at at least 500 unique texts to ensure that these racers sampled had raced a moderate amount. We also chose 500 minimum unique texts to reduce the premium repeat-text issue mentioned above.</p>
-<p>This sample satisfies the three conditions of random, independence, and CLT normal distribution. This sample was randomly selected out of a population using <code>slice_sample</code>. Independence is met because the total sample is less than 10% of the population (1.1k vs 100). CLT normal distribution is met since the sample is greater than 30 (100).</p>
+<p>This sample satisfies the three conditions of random, independence, and CLT normal distribution. This sample was randomly selected out of a population using <code>slice_sample</code>. Independence is met because the total sample is less than 10% of the population (<a href="https://typeracerdata.com/leaders?min_races=2500&amp;min_texts=500&amp;sort=races&amp;rank_start=6514&amp;rank_end=8094">~1.6k</a> vs 100). CLT normal distribution is met since the sample is greater than 30 (100).</p>
 <p>After getting sample racers for data and querying all of their races in other rmd files, we aggregated all of these races in the <code>all_races.csv</code> file. You can find these processes in our <a href="https://github.com/GeoffreyXue/typeracerstat240">github</a> in the <code>draft_race_log.rmd</code> and <code>draft_data_sampling.rmd</code> file in the <code>draft</code> folder.</p>
 <p>Using this data, we then draw a regression line relative to wpm and game_number and find the slope and intercept. Afterwards, we then calculate the estimate improvement of a racer relative to their starting wpm. To calculate their estimated wpm, we can use</p>
 <p><span class="math display">\[

@@ -7,6 +7,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+**If needed, additional information can be found on our background. The background may clarify questions of interest and the data description, since a more thorough paragraph is provided with the background file.**
+
 ## Group Members
 - Stanley Tzeng
 - Yi Hsuan Chang Chien
@@ -24,17 +26,6 @@ knitr::opts_chunk$set(echo = TRUE)
   - F: 6 - Night 
   - SU: 2 PM - 4 PM
 
-Deadlines:
-- November 22 (Monday): Project proposal due
-- November 30 (Tuesday): Data description, background, and selected graph due
-  - This will be graded as a group assignment within the discussion category
-- December 7 (Tuesday): Draft of HTML document and written report due
-- December 9 (Thursday): Peer reviews due
-- December 13 (Monday). Project report due
-  - Week of December 13–15: Project oral presentations during discussion
-- This will be graded as a group assignment within the discussion category
-- December 21 (Tuesday): Final exam
-
 ## Questions of Interest
 - Research questions which may be supported or refuted by data analysis
   - Predicts or proposes relationships between some variables in study
@@ -42,6 +33,7 @@ Deadlines:
 - Focus on a few focused questions
 
 For racers who have played a moderate number of games:
+
 - How do typing races affect/correlate to typing speed?
   - How do typing races affect/correlate to accuracy?
   - How does time spent on typing software affect/correlate to typing speed improvement?
@@ -50,7 +42,7 @@ For racers who have played a moderate number of games:
   
 To make these questions more specific, we can filter racers first by total texts typed and races made to get a "better" sample to answer these questions.  
 
-In the project draft, we will zone in on a specific set of players to analyze. 
+In the project draft, we will zone in on a specific set of players to analyze.
 
 If we have more time, we can also analyze the below question:
 How do the total number of races affect the total typing speed improvement?
@@ -74,7 +66,9 @@ The first will allow us to find sample users, and the other will allow us to sea
   - Typeracer likely collected data to keep track of potentially because of player behavior or their own anlysis
   - Typeracerdata's data was manually queried from players, so data was aggregated there in the interest of those typeracers
 - What are key variables in data set and what do they measure? **how do they relate to key questions?**
-  - TYD: Racer - The name of the racer to be pulled
+  - TYD: 
+    - racer - The name of the racer to be pulled
+    - races - The total number of races 
   - TY:
     - wpm - Words per minute on text (related to typing speed)
     - ac - Accuracy on text (related to accuracy)
