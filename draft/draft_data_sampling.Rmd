@@ -106,7 +106,7 @@ head(table)
 table = table %>% 
   # Some of these are redundant
   filter(races < races_max & races > races_min & texts > texts_min) %>% 
-  select(racer, races) #%>% 
+  select(racer, races) %>% 
   slice_sample(n = racers)
 
 table

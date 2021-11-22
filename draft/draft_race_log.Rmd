@@ -15,7 +15,9 @@ library(lubridate)
 
 ### Overview
 - Grab csv of race names and races
+- Update all racers before aggregating data
 - Get all races from each racer and log them individually in csv files
+- Take csv files and aggregate them into a single data file
 
 ##### Endpoint used:
 https://data.typeracer.com/games?
@@ -26,16 +28,25 @@ https://data.typeracer.com/games?
 ### Useful Links
 - https://robotwealth.com/how-to-wrangle-json-data-in-r-with-jsonlite-purr-and-dplyr/
 
-### Function to Log Race
+### Function to Update Racers and Log Race
 
 ``` {r}
+# updates 
+update_racer = function(id)
+{
+  path = "https://typeracerdata.com/import";
+  parameters = list(username = id)
+  
+  request = GET(url = path, query = parameters)
+}
+
 store_races = function(id, races)
 {
   # Endpoint will feed in id and total races
   path = "https://data.typeracer.com/games";
   parameters = list(
     playerId = str_c("tr:", id),
-    n = races
+    n = 3500 #races (sometimes races aren't updated)
   )
   
   tryCatch(
@@ -71,12 +82,39 @@ store_races = function(id, races)
 }
 ```
 
-### Iterate through names and log all races
+### Iterate through names and update/log all races
 ``` {r eval = FALSE}
-# Currently at 60/100
 names = read_csv("names.csv")
+
+for (i in seq_len(nrow(names))) {
+  update_racer(names$racer[i])
+  print(i)
+}
+
+print("all racers logged")
+
 for (i in seq_len(nrow(names))) {
   store_races(names$racer[i], names$races[i])
   print(i)
 }
+```
+
+
+### Combine all individual csv files into large csv file
+``` {r eval = FALSE} 
+combine_racer_data = function(id) {
+  data = read_csv(str_c("race_log/", id, ".csv"), show_col_types = FALSE)
+  data = data %>% add_column(name = id) %>% select(name, everything())
+  data
+}
+
+data = tibble()
+names = read_csv("names.csv")
+for (i in seq_len(nrow(names))) {
+  data = data %>% bind_rows(combine_racer_data(names$racer[i]))
+}
+
+head(data)
+
+write_csv(data, "all_races.csv")
 ```
