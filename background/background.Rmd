@@ -1,9 +1,22 @@
 ---
-title: "background"
+title: "Background"
 output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE,
+                      cache=TRUE, autodep=TRUE, cache.comments=FALSE)
+library(tidyverse)
+```
+
 Due Nov 30: Data description, background, and selected graph due
+
+### Group Members
+- Stanley Tzeng
+- Yi Hsuan Chang Chien
+- Steven Stehl
+- Geoffrey Xue
+- Vishnu Anand
 
 ### Data Description
 
@@ -32,7 +45,7 @@ Every time a racer races, typeracer will log that race, along with some statisti
 
 Despite the fact that typeracer maintains this list of races for each player, there is no publicly available list of players. To solve this, we are utilizing a third-party website, **typeracerdata**, that aggregates and logs racer names and some associated statistics for us. Players can manually enter themselves into **typeracerdata** and then can query themselves for updates. 
 
-To answer our questions of interest, we will first filter names of typists from **typeracerdata** based on a variety of variables (race, texts, etc.), and then individually query each name for their races from **typeracer**.
+To answer our questions of interest, we will first filter names of typists from **typeracerdata** based on a variety of variables (race, texts, etc.), and then individually query each name for their races from **typeracer**. This data will then be our main data set
 
 Next, we'll address each of our questions of interest:
 
@@ -65,6 +78,17 @@ After getting the names (ids) of typists from **typeracerdata**, we'll then quer
 - *gn* - game number (Standardizing game numbers)
 - *pts* - points = words/sec * words in text (related to length of text)
 
+Finally, we will combine all of this data into an aggregate csv, with
+  
+- *name* - id of typist
+- *wpm* - words per minute
+- *accuracy* - accuracy on text
+- *time* - timestamp of race
+- *game_num* - game number
+- *points* - points of race
+
+This data is the same as the above two except combined, so its relation to the questions remain the same as the reasons provided in the above two formats
+
 ### Graph
 
 This graph is related to our first question - How has typing improved over the span of the races?
@@ -73,12 +97,73 @@ More specifically, we'll be looking at estimated words per minute improvement ov
 
 First, our sample data from typeracerdata will be filtered as follows
 - total races - 2500 to 3000
-- minimum unique texts - 1000
+- minimum unique texts - 500
 - total racers in sample - 100
 
-We chose these numbers arbitrarily, and these are subject to change. We chose racers with at least 2500 to 3000 races at at least 1000 unique texts to ensure that these racers sampled had raced moderate amount. We also chose 500 minimum unique texts to reduce the premium repeat-text issue mentioned above.
+We chose these numbers arbitrarily, and these are subject to change. We chose racers with at least 2500 to 3000 races at at least 500 unique texts to ensure that these racers sampled had raced a moderate amount. We also chose 500 minimum unique texts to reduce the premium repeat-text issue mentioned above.
 
-This sample satisfies the three conditions of random, independence, and CLT normal distribution. This sample was randomly selected out of a population using `slice_sample`. Independence is met because the total sample is less than 10% of the population (1.1k vs 100). CLT normal distribution is met since the sample is greater than 30 (100).
+This sample satisfies the three conditions of random, independence, and CLT normal distribution. This sample was randomly selected out of a population using `slice_sample`. Independence is met because the total sample is less than 10% of the population (1.1k vs 100). CLT normal distribution is met since the sample is greater than 30 (100).  
+
+After getting sample racers for data and querying all of their races in other rmd files, we aggregated all of these races in the `all_races.csv` file. You can find these processes in our [github](https://github.com/GeoffreyXue/typeracerstat240) in the `draft_race_log.rmd` and `draft_data_sampling.rmd` file in the `draft` folder. 
+
+Using this data, we then draw a regression line relative to wpm and game_number and find the slope and intercept. Afterwards, we then calculate the estimate improvement of a racer relative to their starting wpm. To calculate their estimated wpm, we can use   
+
+$$
+wpm = game\_num * slope + intercept \\
+f(x) = x * m + b
+$$
+To calculate their improvement relative to their estimated wpm, we can find the difference between their first estimated wpm and last race estimated wpm and then divide that by their first estimated wpm
+$$
+imp = \dfrac{f(final\_game\_num) - f(first\_game\_num)}{f(first\_game\_num)} \\
+= \dfrac{f(n) - f(0)}{f(0)} \\
+= \dfrac{n * m + b - b}{b} \\
+= \dfrac{n * m}{b}
+$$
+```{r}
+data = read_csv("../draft/all_races.csv")
+
+improvement = data %>% 
+  # lm y ~ x will produce summary table of intercept and slope
+  # We grab the slope of game_num to wpm and store in the imp column
+  group_by(name) %>% 
+  mutate(b = lm(wpm ~ game_num)$coefficients[1], m = lm(wpm ~ game_num)$coefficients[2]) %>% 
+  group_by(name) %>% 
+  summarize(n = n(), imp = n * m / b) %>% 
+  distinct()
+
+head(improvement)
+
+ggplot(improvement, aes(x = 0, y = imp * 100)) +
+  geom_violin() +
+  geom_jitter() +
+  ggtitle("Estimated Word Per Minute Improvement for Moderate Typeracer Users", subtitle = "2500 - 3000 races, 500 min texts, relative difference between estimated end and start wpm") +
+  ylab("Improvement (%)") +
+  xlab("") +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank())
+
+```
+
+This graph provides key evidence for the question of whether typing has improved over the span of each individual's races, as it shows the percent improvement in their estimated starting wpm and ending wpm in a linear regression. 
 
 
+```{r include=FALSE, eval = FALSE}
+# Code saved for later, ignore for background
+x = c(1, 2, 3, 4, 5)
+y = c(2, 4, 6, 8, 10)
+((lm(y ~ x)$coefficients[1] + lm(y ~ x)$coefficients[2] * 5) - (lm(y ~ x)$coefficients[1] + lm(y ~ x)$coefficients[2] * 1)) / (lm(y ~ x)$coefficients[1] + lm(y ~ x)$coefficients[2] * 1)
+
+
+# first_wpm = data %>% 
+#   group_by(name) %>% 
+#   mutate(min_game_num = min(game_num)) %>% 
+#   filter(game_num == min_game_num) %>% 
+#   select(name, wpm)
+
+# start_wpm = data %>% 
+#   group_by(name) %>% 
+#   filter(game_num %in% min_games)
+```
 

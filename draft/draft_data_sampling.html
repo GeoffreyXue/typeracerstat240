@@ -172,7 +172,7 @@ pre code {
 <h3>Overview</h3>
 <ul>
 <li>Determine filter for users based on certain number of races and text raced</li>
-<li>Save usernames in file for secondary query</li>
+<li>Save usernames in file in <code>names.csv</code></li>
 </ul>
 <div id="endpoint-used" class="section level5">
 <h5>Endpoint used:</h5>
@@ -207,7 +207,7 @@ pre code {
 <h4>Variables</h4>
 <pre class="r"><code>races_min = 2500
 races_max = 3000
-texts_min = 1000
+texts_min = 500
 racers = 100
 
 path = &quot;http://typeracerdata.com/leaders&quot;;
@@ -218,9 +218,9 @@ parameters = list(
   min_texts = texts_min,
   rank_start = 0,
   # Arbitrary large number to pull all data. If rank_end is not specified,
-  # the amount returned defaults to 50. There are only ~16k users logged
+  # the amount returned defaults to 50. There are only ~216k users logged
   # in typeracerdata, so this number guarantees full retrieval
-  rank_end = 20000,
+  rank_end = 100000,
   sort = &quot;races&quot;
 )</code></pre>
 </div>
@@ -231,9 +231,9 @@ parameters = list(
 <p>However, each name does possess an href tag with their full true name. I can first get those, get the rest of the table, and replace the names</p>
 <pre class="r"><code>request = GET(url = path, query = parameters)
 
-request$status_code</code></pre>
-<pre><code>## [1] 200</code></pre>
-<pre class="r"><code>table_html = read_html(request)
+request$status_code
+
+table_html = read_html(request)
 
 # Getting names from href tags
 names = table_html %&gt;% 
@@ -242,10 +242,9 @@ names = table_html %&gt;%
   str_extract(&quot;\\=.*$&quot;) %&gt;% 
   str_sub(2)
 
-head(names)</code></pre>
-<pre><code>## [1] &quot;keegant&quot;      &quot;mark40511&quot;    &quot;wordracer888&quot; &quot;deroche1&quot;     &quot;chimchimchim&quot;
-## [6] &quot;charlieog&quot;</code></pre>
-<pre class="r"><code># Parsing rest of the table
+head(names)
+
+# Parsing rest of the table
 table = table_html %&gt;% html_table(fill = TRUE)
 table = table[[1]]
 
@@ -263,15 +262,6 @@ table = table %&gt;%
   )
 
 head(table)</code></pre>
-<pre><code>## # A tibble: 6 x 3
-##   racer         races texts
-##   &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt;
-## 1 keegant      387660  7367
-## 2 mark40511    330969  7403
-## 3 wordracer888 304885  5056
-## 4 deroche1     300000  6156
-## 5 chimchimchim 192239  4939
-## 6 charlieog    172527  7403</code></pre>
 </div>
 <div id="filter-data-random-sampling-of-names-store-in-csv" class="section level3">
 <h3>Filter data, random sampling of names, store in csv</h3>
@@ -281,22 +271,9 @@ head(table)</code></pre>
   select(racer, races) %&gt;% 
   slice_sample(n = racers)
 
-table</code></pre>
-<pre><code>## # A tibble: 100 x 2
-##    racer        races
-##    &lt;chr&gt;        &lt;dbl&gt;
-##  1 superkai65    2704
-##  2 bulletsoul11  2656
-##  3 hubba485      2893
-##  4 bonboy        2964
-##  5 soroosheh10   2549
-##  6 frxnny        2613
-##  7 qtqtq         2748
-##  8 sajidul       2854
-##  9 chient        2570
-## 10 dexter35      2582
-## # ... with 90 more rows</code></pre>
-<pre class="r"><code>write_csv(table, &quot;names.csv&quot;)</code></pre>
+table
+
+write_csv(table, &quot;names.csv&quot;)</code></pre>
 </div>
 
 

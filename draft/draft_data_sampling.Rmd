@@ -13,7 +13,7 @@ library(rvest)
 
 ### Overview
 - Determine filter for users based on certain number of races and text raced
-- Save usernames in file for secondary query
+- Save usernames in file in `names.csv`
 
 ##### Endpoint used:
 http://typeracerdata.com/leaders?  
@@ -64,7 +64,7 @@ The racer names shown are show the nickname followed by their true name in paren
 
 However, each name does possess an href tag with their full true name. I can first get those, get the rest of the table, and replace the names
 
-```{r}
+```{r eval = FALSE}
 request = GET(url = path, query = parameters)
 
 request$status_code
@@ -102,7 +102,7 @@ head(table)
 ```
 
 ### Filter data, random sampling of names, store in csv
-```{r}
+```{r eval = FALSE}
 table = table %>% 
   # Some of these are redundant
   filter(races < races_max & races > races_min & texts > texts_min) %>% 

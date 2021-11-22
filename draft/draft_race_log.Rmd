@@ -17,7 +17,8 @@ library(lubridate)
 - Grab csv of race names and races
 - Update all racers before aggregating data
 - Get all races from each racer and log them individually in csv files
-- Take csv files and aggregate them into a single data file
+  - this folder is ignored in github, so if you have cloned this project, you must create a `race_log` folder in draft to successfully run this program
+- Take csv files and aggregate them into a single data file, `all_races.csv`
 
 ##### Endpoint used:
 https://data.typeracer.com/games?
@@ -31,14 +32,14 @@ https://data.typeracer.com/games?
 ### Function to Update Racers and Log Race
 
 ``` {r}
-# updates 
-update_racer = function(id)
-{
-  path = "https://typeracerdata.com/import";
-  parameters = list(username = id)
-  
-  request = GET(url = path, query = parameters)
-}
+# ignore this function for now 
+# update_racer = function(id)
+# {
+#   path = "https://typeracerdata.com/import";
+#   parameters = list(username = id)
+#   
+#   request = GET(url = path, query = parameters)
+# }
 
 store_races = function(id, races)
 {
@@ -46,7 +47,7 @@ store_races = function(id, races)
   path = "https://data.typeracer.com/games";
   parameters = list(
     playerId = str_c("tr:", id),
-    n = 3500 #races (sometimes races aren't updated)
+    n = races
   )
   
   tryCatch(
@@ -86,12 +87,12 @@ store_races = function(id, races)
 ``` {r eval = FALSE}
 names = read_csv("names.csv")
 
-for (i in seq_len(nrow(names))) {
-  update_racer(names$racer[i])
-  print(i)
-}
+# for (i in seq_len(nrow(names))) {
+#   update_racer(names$racer[i])
+#   print(i)
+# }
 
-print("all racers logged")
+# print("all racers logged")
 
 for (i in seq_len(nrow(names))) {
   store_races(names$racer[i], names$races[i])

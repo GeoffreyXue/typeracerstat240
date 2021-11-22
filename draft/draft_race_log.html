@@ -172,7 +172,12 @@ pre code {
 <h3>Overview</h3>
 <ul>
 <li>Grab csv of race names and races</li>
-<li>Get all races from each racer and log them individually in csv files</li>
+<li>Update all racers before aggregating data</li>
+<li>Get all races from each racer and log them individually in csv files
+<ul>
+<li>this folder is ignored in github, so if you have cloned this project, you must create a <code>race_log</code> folder in draft to successfully run this program</li>
+</ul></li>
+<li>Take csv files and aggregate them into a single data file, <code>all_races.csv</code></li>
 </ul>
 <div id="endpoint-used" class="section level5">
 <h5>Endpoint used:</h5>
@@ -189,9 +194,18 @@ pre code {
 <li><a href="https://robotwealth.com/how-to-wrangle-json-data-in-r-with-jsonlite-purr-and-dplyr/" class="uri">https://robotwealth.com/how-to-wrangle-json-data-in-r-with-jsonlite-purr-and-dplyr/</a></li>
 </ul>
 </div>
-<div id="function-to-log-race" class="section level3">
-<h3>Function to Log Race</h3>
-<pre class="r"><code>store_races = function(id, races)
+<div id="function-to-update-racers-and-log-race" class="section level3">
+<h3>Function to Update Racers and Log Race</h3>
+<pre class="r"><code># ignore this function for now 
+# update_racer = function(id)
+# {
+#   path = &quot;https://typeracerdata.com/import&quot;;
+#   parameters = list(username = id)
+#   
+#   request = GET(url = path, query = parameters)
+# }
+
+store_races = function(id, races)
 {
   # Endpoint will feed in id and total races
   path = &quot;https://data.typeracer.com/games&quot;;
@@ -200,42 +214,71 @@ pre code {
     n = races
   )
   
-  request = GET(url = path, query = parameters)
+  tryCatch(
+    {
+      request = GET(url = path, query = parameters)
   
-  # Convert request json to tibble, some renaming for clarity
-  # General data cleanup, removing uneeded columns and converting datetimes
-  races = as_tibble(fromJSON(content(request, &#39;text&#39;))) %&gt;% 
-    rename(
-      accuracy = ac,
-      time = t,
-      game_num = gn,
-      racers_num = np,
-      points = pts
-    ) %&gt;% 
-    select(everything(), -r, -sl, -tid) %&gt;% 
-    mutate(time = as_datetime(time))
+      # Convert request json to tibble, some renaming for clarity
+      # General data cleanup, removing uneeded columns and converting datetimes
+      races = as_tibble(fromJSON(content(request, &#39;text&#39;))) %&gt;% 
+        rename(
+          accuracy = ac,
+          time = t,
+          game_num = gn,
+          racers_num = np,
+          points = pts
+        ) %&gt;% 
+        select(everything(), -r, -sl, -tid) %&gt;% 
+        mutate(time = as_datetime(time))
+      
+      # Write to csv in race_log folder with id
+      write_csv(races, str_c(&quot;race_log/&quot;, id, &quot;.csv&quot;))
+    },
+    error = function(e) {
+      # If encounters error with parsing, then sleep for 60 seconds and try again
+      print(str_c(&quot;error with &quot;, id))
+      print(e)
+      Sys.sleep(60)
+      store_races(id, races)
+    }
+  )
   
-  # Write to csv in race_log folder with id
-  write_csv(races, str_c(&quot;race_log/&quot;, id, &quot;.csv&quot;))
-  
-  # Prevent too many queries at once
-  Sys.sleep(5)
-
   return ( NULL )
-}
-
-test = function(x, y) {
-  t = str_c(x, y)
-  print(t)
 }</code></pre>
 </div>
-<div id="iterate-through-names-and-log-all-races" class="section level3">
-<h3>Iterate through names and log all races</h3>
+<div id="iterate-through-names-and-updatelog-all-races" class="section level3">
+<h3>Iterate through names and update/log all races</h3>
 <pre class="r"><code>names = read_csv(&quot;names.csv&quot;)
+
+# for (i in seq_len(nrow(names))) {
+#   update_racer(names$racer[i])
+#   print(i)
+# }
+
+# print(&quot;all racers logged&quot;)
 
 for (i in seq_len(nrow(names))) {
   store_races(names$racer[i], names$races[i])
+  print(i)
 }</code></pre>
+</div>
+<div id="combine-all-individual-csv-files-into-large-csv-file" class="section level3">
+<h3>Combine all individual csv files into large csv file</h3>
+<pre class="r"><code>combine_racer_data = function(id) {
+  data = read_csv(str_c(&quot;race_log/&quot;, id, &quot;.csv&quot;), show_col_types = FALSE)
+  data = data %&gt;% add_column(name = id) %&gt;% select(name, everything())
+  data
+}
+
+data = tibble()
+names = read_csv(&quot;names.csv&quot;)
+for (i in seq_len(nrow(names))) {
+  data = data %&gt;% bind_rows(combine_racer_data(names$racer[i]))
+}
+
+head(data)
+
+write_csv(data, &quot;all_races.csv&quot;)</code></pre>
 </div>
 
 
