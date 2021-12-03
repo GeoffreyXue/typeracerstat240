@@ -147,7 +147,7 @@ ggplot(improvement, aes(x = 0, y = imp * 100)) +
 
 ```
 
-This graph provides key evidence for the question of whether typing has improved over the span of each individual's races, as it shows the percent improvement in their estimated starting wpm and ending wpm in a linear regression. 
+This graph provides key evidence for the question of whether typing has improved over the span of each individual's races, as it shows the percent improvement in their estimated starting wpm and ending wpm in a linear regression. The violin plot combined with the jittered points shows most improvement falling between 0 and 50% at around 20%. The distribution is right skewed relative to improvement, as there are some in the distribution that show significantly more relative wpm improvement at around 50 - 150%.
 
 
 ```{r include=FALSE, eval = FALSE}
