@@ -1,0 +1,6 @@
+unnamed-chunk-1	$	%>%	~	b	distinct	group_by	head	lm	m	mutate	n	name	read_csv	summarize	ungroup
+unnamed-chunk-2	%>%	==	aes	data	filter	game_num	geom_jitter	geom_smooth	ggplot	ggtitle	name	wpm	xlab	ylab
+unnamed-chunk-3	$	%>%	~	aes	b	game_num	geom_hline	geom_jitter	ggplot	ggtitle	lm	m	mutate	res	sample_chart	select	wpm	xlab	ylab
+unnamed-chunk-4	aes	element_blank	geom_jitter	geom_violin	ggplot	ggtitle	imp	improvement	theme	xlab	ylab
+unnamed-chunk-5	%>%	imp	improvement	mean	mutate	n	pull	s	sd	sqrt	summarize	xbar
+unnamed-chunk-6	$	%>%	geom_t_fill	geom_vline	ggtitle	gt	mutate	n	pt	pull	t_stat	theme_minimal	xlab	ylab

@@ -7,8 +7,185 @@ output: html_document
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE,
                       cache=TRUE, autodep=TRUE, cache.comments=FALSE)
 library(tidyverse)
+source("../../scripts/viridis.R")
+source("../../scripts/ggprob.R")
 ```
 
-### Question of Interest -  How has typing improved over the span of the races?
+### Question of Interest - How has typing improved over the span of the races?
 
 ### Overview
+- Approach
+- Aggregate data
+- Validate Assumptions and Explore Data for Analysis
+- Visualize key graph of evidence
+- Perform Hypothesis Test
+- Analyze Results
+
+### Approach
+
+Using this data, we draw a regression line relative to wpm and game_number and find the slope and intercept. Afterwards, we then calculate the estimate improvement of a racer relative to their starting wpm. To calculate their estimated wpm, we can use   
+
+$$
+wpm = game\_num * slope + intercept \\
+f(x) = x * m + b
+$$
+To calculate their improvement relative to their estimated wpm, we can find the difference between their first estimated wpm and last race estimated wpm and then divide that by their first estimated wpm
+$$
+imp = \dfrac{f(final\_game\_num) - f(first\_game\_num)}{f(first\_game\_num)} \\
+= \dfrac{f(n) - f(0)}{f(0)} \\
+= \dfrac{n * m + b - b}{b} \\
+= \dfrac{n * m}{b}
+$$
+From there, we perform a hypothesis test to determine whether typing speed, in words per minute, has improved over the span of the races.
+
+### Aggregate Data
+```{r}
+data = read_csv("./all_races.csv")
+
+improvement = data %>% 
+  # lm y ~ x will produce summary table of intercept and slope
+  # We grab the slope of game_num to wpm and store in the imp column
+  group_by(name) %>% 
+  mutate(
+    b = lm(wpm ~ game_num)$coefficients[1], 
+    m = lm(wpm ~ game_num)$coefficients[2]
+  ) %>% 
+  group_by(name) %>% 
+  summarize(n = n(), imp = n * m / b) %>% 
+  distinct() %>% 
+  ungroup()
+
+head(improvement)
+```
+
+### Validate Assumptions and Explore Data for Analysis
+
+Since we're doing a regression model for each typist, we must assume that, across the line, the mean of the residuals is 0 and the variation is constant.
+
+First, we provide an example of a typist's improvement in general. Here, we grab a specific user from our data to graph their improvement with a sample regression line.
+```{r}
+sample_chart = data %>% 
+  filter(name == "ulmaa")
+
+ggplot(sample_chart, aes(x = game_num, y = wpm)) + 
+  geom_jitter() +
+  geom_smooth(method = "lm", se = FALSE) +
+  xlab("Number of Races") +
+  ylab("Typing Speed (Words Per Minute)") +
+  ggtitle("Typing Improvement over Number of Races", subtitle = "Racer Ulmaa")
+```
+
+From observing this graph, we see that there is a bit of heteroscedasticity. As the the typist increases in their number of races, it seems like there is more variation in their words per minute. Therefore, the variation over the regression line is not constant. For the sake of this analysis, we'll just assume this to be not the case.
+
+Next, we look at the residual plots for this sample racer after fitting a linear regression model. Here, we calculate the m and b described in the LaTeX up top, but we subtract from the true wpm, finding the residual of the graph.
+```{r}
+sample_chart %>% 
+  mutate(
+      b = lm(wpm ~ game_num)$coefficients[1], 
+      m = lm(wpm ~ game_num)$coefficients[2]
+    ) %>% 
+  mutate(
+    res = wpm - (game_num * m + b)
+  ) %>% 
+  select(game_num, res) %>% 
+  ggplot(aes(x = game_num, y = res)) +
+    geom_jitter() +
+    geom_hline(yintercept = 0, color = "red") +
+    xlab("Number of Races") +
+    ylab("Residuals (Words Per Minute)") +
+    ggtitle("Regression Model Residuals for Typing Speed Over Races", subtitle = "Racer Ulmaa")
+```
+
+Here, the graph highlights that our second assumption seems to hold true - the mean across the graph is about 0. The graph doesn't appear to show significant skewedness throughout the entirely of the curve. Again, heteroscedasticity is present in the graph.
+
+### Visualize Key Graph of Evidence
+
+This graph provides key evidence for the question of whether typing has improved over the span of each individual's races, as it shows the percent improvement in their estimated starting wpm and ending wpm in a linear regression. The violin plot combined with the jittered points shows most improvement falling between 0 and 50% at around 20%. The distribution is right skewed relative to improvement, as there are some in the distribution that show significantly more relative wpm improvement at around 50 - 150%.
+
+```{r}
+ggplot(improvement, aes(x = 0, y = imp * 100)) +
+  geom_violin() +
+  geom_jitter() +
+  ggtitle("Estimated Word Per Minute Improvement for Moderate Typeracer Users", subtitle = "2500 - 3000 races, 500 min texts, relative difference between estimated end and start wpm") +
+  ylab("Improvement (%)") +
+  xlab("") +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank())
+```
+
+### Perform Hypothesis Test
+Again, our question focused on how typists experience typing improvement over the span of races. We perform a one-sample, two-tailed hypothesis test to test our question.
+
+#### Population and Sample
+- The population is typists on typeracer who have between 2500-3000 races and at least 500 texts logged.
+- The sample is the 100 typists randomly sampled out of the ~1.6k
+
+#### Parameters
+- We are looking at the improvement of a typist relative to their estimated wpm, so:
+- $\mu$ is the mean improvement
+- $\sigma$ is the standard deviation of this improvement
+
+#### Statistical Model
+- improvements for each typist are $x_1,\dots,x_n$ for $n = 100$
+- Model these times as a random sample from the larger population
+  - $F$ is the unspeified distribution
+  - $\mu$ be the mean
+  - $\sigma$ be the standard deviation
+
+#### Hypothesis
+$$
+H_0: \mu = 0 \\
+H_a: \mu > 0
+$$
+
+#### Test Statistic
+- Standardize the sample mean and compare it to a known distribution
+$$
+T = \frac{\bar{X} - \mu}{s / \sqrt{n}} \sim t(n-1)
+$$
+- where $t(n-1)$ is a $t$ distribution with $n-1$ degrees of freedom
+
+```{r}
+imp_sum = improvement %>% 
+  summarize(n = n(),
+            xbar = mean(imp),
+            s = sd(imp)) %>% 
+  mutate(t_stat = (xbar - 0) / (s / sqrt(n)))
+
+imp_sum
+
+t_stat = imp_sum %>% pull(t_stat)
+
+t_stat
+  
+```
+The observed sample mean is about 11.926 standard errors below the mean of the null distribution $\mu_0 = 0$
+
+#### P-Value Calculation
+```{r}
+imp_sum = imp_sum %>% 
+  mutate(p_value = pt(t_stat, n - 1))
+
+imp_sum
+
+p_value = imp_sum %>% pull(p_value)
+
+p_value
+
+gt(df = imp_sum$n - 1) +
+  geom_t_fill(df = imp_sum$n - 1, a = t_stat) +
+  geom_vline(xintercept = t_stat, color = "red", linetype = "dashed") +
+  xlab("t") +
+  ylab("Density") +
+  ggtitle("Normalized T Distribution with Test Statistic",
+          subtitle="For all racers") +
+  theme_minimal()
+```
+
+### Analyze Results
+
+There is overwhelming evidence that the mean improvement, by proportion, for a typist relative to their starting estimated wpm over races is greater than 0 (p is 1, one-sided t-test, df=99).
+
+In other words, there is overwhelming experience that a typist, based on their starting estimated wpm, experienced improvement over races.

@@ -1,0 +1,31 @@
+---
+title: "Draft Report"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE,
+                      cache=TRUE, autodep=TRUE, cache.comments=FALSE)
+library(tidyverse)
+```
+
+### Group Members
+- Stanley Tzeng
+- Yi Hsuan Chang Chien
+- Steven Stehl
+- Geoffrey Xue
+- Vishnu Anand
+
+### Tasks
+- Intro
+  - Copy over questions of interest
+  - Come up with thesis statement
+- Background
+  - Copy over everything from background
+  - Copy over data wrangling tasks 
+- Analysis
+  - Once finished, copy each section of t_XYZ into here, no conclusion 
+- Discussion
+  - Copy each conclusion section from each t_XYZ into here
+  - Discuss short-comings
+  - Discuss future directions

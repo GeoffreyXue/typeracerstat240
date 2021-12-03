@@ -12,3 +12,18 @@ library(tidyverse)
 ### Question of Interest - How does text length impact typing?
 
 ### Overview
+- Aggregate data
+- Validate assumptions of data
+- Visualize key graph of evidence
+- Perform Hypothesis Test
+- Analyze Results
+
+### Aggregate Data
+
+### Validate Asumptions of Data
+
+### Visualize Key Graph of Evidence
+
+### Perform Hypothesis Test
+
+### Analyze Results
