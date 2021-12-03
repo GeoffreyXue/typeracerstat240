@@ -1,0 +1,14 @@
+---
+title: "t_time"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE,
+                      cache=TRUE, autodep=TRUE, cache.comments=FALSE)
+library(tidyverse)
+```
+
+### Question of Interest -  How does overall time spent on typing software correlate to typing speed improvement?
+
+### Overview
