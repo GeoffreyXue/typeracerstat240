@@ -47,8 +47,8 @@ improvement = data %>%
   # We grab the slope of game_num to wpm and store in the imp column
   group_by(name) %>% 
   mutate(
-    b = lm(wpm ~ game_num)$coefficients[1], 
-    m = lm(wpm ~ game_num)$coefficients[2]
+    b = coef(lm(wpm ~ game_num))[1], 
+    m = coef(lm(wpm ~ game_num))[2]
   ) %>% 
   group_by(name) %>% 
   summarize(n = n(), imp = n * m / b) %>% 
@@ -65,7 +65,7 @@ Since we're doing a regression model for each typist, we must assume that, acros
 First, we provide an example of a typist's improvement in general. Here, we grab a specific user from our data to graph their improvement with a sample regression line.
 ```{r}
 sample_chart = data %>% 
-  filter(name == "ulmaa")
+  filter(name == "rastaman_1994")
 
 ggplot(sample_chart, aes(x = game_num, y = wpm)) + 
   geom_jitter() +
@@ -81,8 +81,8 @@ Next, we look at the residual plots for this sample racer after fitting a linear
 ```{r}
 sample_chart %>% 
   mutate(
-      b = lm(wpm ~ game_num)$coefficients[1], 
-      m = lm(wpm ~ game_num)$coefficients[2]
+      b = coef(lm(wpm ~ game_num))[1], 
+      m = coef(lm(wpm ~ game_num))[2]
     ) %>% 
   mutate(
     res = wpm - (game_num * m + b)

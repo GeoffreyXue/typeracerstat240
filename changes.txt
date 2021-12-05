@@ -1,0 +1,29 @@
+Change moderate users --> power users of typeracer - (2.5k to 3k races, >500 texts)
+	- Current power users of typeracer may be just better at learning/improving at typing
+
+How does typeracer improve typing speeds?
+- First look at span of races
+	- Mention how this does not include time breaks between racers or account overall time
+- Second look at longest hiatuses for racers
+	- Compare to end estimated word per minute
+	- Look for "long" hiatuses, remove users
+
+Where to put data wrangling into our setup?
+- First filter for racers by typeracerdata
+- Then query data for each user directly from typeracer api
+
+Probably improving due to these exercises
+
+
+
+- Refactor background, intro to be more generalized towards context for the question
+- Refactor question of interest
+	- Clarify how this is a causational relationship
+	- Assumption about our question of interest (Hypothesis)
+- Explain definition of power users and sample of interest, potential assumptions here
+- Move context about data setup into other section, explain how data is wrangled in this section
+- Experimental assumptions about the data  (good daata), data analysis to clean up data
+	- Look at hiatuses
+- Actual regression for each user logic and explanation (t_races)
+- Results - does it improve typing? how much does it improve typing?
+- Conclusion - drawn for power racers of typeracer

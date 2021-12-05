@@ -29,3 +29,294 @@ library(tidyverse)
   - Copy each conclusion section from each t_XYZ into here
   - Discuss short-comings
   - Discuss future directions
+
+## Introduction
+
+Today, we spend a significant portion of time on our computers, typing as our main method of input. As a collective, we were interested in exploring patterns of typing and typing habits. In grade school, we all used to learn how to type on different typing software tools, with the overall goal of getting "better" at typing. One of the more popular typing software tools is **typeracer**.
+
+**Typeracer** is an online typing software where you race against other typists on "text tracks". For every game, a **random quote/paragraph** is selected for the race, and racers are challenged to type the excerpt as fast as possible. Over time, racers build up a history of typing on hundreds or thousands of texts, accumulating data and a log of typing records. 
+
+Our main question of interest is centered around this claim of getting "better" at typing through use of typing software like **typeracer**. In specific, *causationally*, how much do the number of races on **typeracer** increase typing speed for a dedicated **typeracer** typist? We hypothesize that generally, dedicated typists will experience significant improvement over the span on their races.
+
+## Background
+
+### Typing and Typeracer - Causational Relationship
+
+Typing is mostly a practiced skill; improvement really only comes with more practice. Since our sample is populated with incredibly dedicated power users who spend substantial amounts of time on the site, it’s reasonable to assume that a good amount of their typing improvement is a result of their typeracer practice/results. Therefore, we can conclude that there is somewhat of a causational relationship between a user’s number of races and a user’s typing 
+
+### What is and What is the Importance of a "Dedicated Typist"?
+
+A dedicated typist, or a power user, is a user who has between 2500 and 3000 races and has typed at least 500 unique texts. We are focusing on this set of players in our study because it is a small subset of players who have a considerable amount of data for us to analyze; it’s easier to see more concrete trends over a large number of races. For some context, there are around 217,000 users who have data recorded about them on typeracerdata.com and our selected sample (before random sampling) is around 2000 users. 
+
+### Data and Data Wrangling
+
+As stated prevously every time a racer races, typeracer will log that race, along with some statistics, and tie that with your account. This provides a method for racers to review their performance over time, but also generates an effective dataset for analysis. Our hypothesis will primarily use lists of these races and the associated data logged.
+
+Despite the fact that typeracer maintains this list of races for each player, there is no publicly available list of players. To find metadata about users (specifically their user ids), we are utilizing a third-party website, **typeracerdata**, that aggregates and logs racer ids and some associated statistics for viewing. Players can manually enter themselves into **typeracerdata** and then can query themselves for updates. 
+
+To collect and unify our data, we will first filter names of typists from **typeracerdata** based on a variety of variables (race, texts, etc.), and then individually query each name for their races from **typeracer**. This data will then be our main data set for this analysis.
+
+#### Part 1: General Sampling for Typist Metadata
+
+As stated above, we have to use **typeracerdata** to first get the metadata for users. Conveniently, typeracerdata allows us to filter racers as well. Typeracerdata has an endpoint where you can filter and sort by a few key identifiers:
+
+Endpoint: `http://typeracerdata.com/leaders?`
+
+- min_races - filter minimum number of races allowed
+- min_texts - filter minimum number of unique texts raced
+- rank_start - ranking start
+- rank_end - ranking end
+  - For example, rank_start = 0 and rank_end = 50 will pull the first 50 racers
+- sort - a sorting category
+
+In our analysis, we filtered typists based on these their total races and total texts. Below is an example query used for querying a list of typists based on some parameters:
+
+Example: `https://typeracerdata.com/leaders?min_races=2500&min_texts=500&sort=races&rank_start=1&rank_end=100000`
+
+This will pull all users with more than 500 unique texts raced and more than 2500 races. We can then scrape the html table and specifically filter for a limit for races. 
+
+Note: If you wish to reproduce this, you have to keep in mind that the `racer` column in typeracerdata echos not only their typist id, but also nickname. If the nickname is too long, their typist is cut off. To obtain their actual id, you can instead grab the link attached to every racer column cell, which contains a link to their profile. Using regex, you can parse and merge their data with their true id.
+
+After obtaining a tibble , we perform simple random sampling within the filtered group to get exactly 100 typists. We'll then take these 100 typists and store them individually in a csv with the following columns:
+
+- *name* - id of typist, or their true name (this distinction is important because every typist also as a nickname only for display)
+- *races* - total number of races typed
+- *texts* - total number of unique texts typed
+
+#### Part 2: Obtaining Actual Data from Metadata 
+
+After obtaining this list of 100 racers, we then query a **typeracer** endpoint for each of their race logs by ID:
+
+Endpoint: `https://data.typeracer.com/games?`
+
+- playerId - the id of the racer, preceded by `tr:`
+- n - the total number of races to be pulled
+
+Below is an example query for getting a user's data:
+
+Example: `https://data.typeracer.com/games?playerId=tr:ulmaa&n=2500`
+
+This will pull the latest 2500 races from a player with the id "ulmaa" in a json list, with each object containing the below format:
+
+- *wpm* - Words per minute on text (related to typing speed)
+- *ac* - Accuracy on text (related to accuracy)
+- *t* - timestamp of race (related to duration of racing)
+- *tid* - text id
+- *gn* - game number (Standardizing game numbers)
+- *pts* - points = words/sec * words in text (related to length of text)
+
+We queried each player by their id and total races, grabbing all of their races. Finally, we combined all of these races into an aggregate csv. Each row in this csv represents a race, with each race containing:
+  
+- *name* - id of typist
+- *wpm* - words per minute
+- *accuracy* - accuracy on text
+- *time* - timestamp of race
+- *game_num* - game number
+- *points* - points of race
+
+This csv is the data we use for our analysis.
+
+### Potential Unusual Factors and Mitigation
+
+One potential unusual factor in our data is a phenomenon of premium repeat racing. For a certain amount a month, typeracer will grant you premium status. Alongside some minor cosmetic changes, premium status allows you to log 5 races on any quote you desire per day throughout practice. This means that some premium users may specifically replay easier texts to score an inflatedly high wpm average. Usually, these premium accounts will either have very few unique texts raced or be an extremely decorated profile with tens of thousands of races. These texts would deviate from their standard texts raced as outliers. In an effort to reduce this problem, we can set a minimum bar of total text raced and an upper limit (3000) for the definition of a dedicated racer so that these accounts are filtered out.
+
+
+### Study Brief
+
+After wrangling all our data, we can begin to study our dataset. We’ll start by validating our experimental assumptions to make sure that we can apply proper statistical models/procedures to our dataset. Then, we want to perform a hypothesis test to see if there exists a relationship between a user’s number of races and their typing improvement. Finally, we’ll analyze and draw conclusions from our results.
+
+
+## Analysis
+
+### General Assumptions
+
+There are several general assumptions we make of the data throughout our paper. Some of the following are listed below:
+
+- Typing wpm progress is linear to the times one has played
+- The typing wpm variance does not increase as the race number or wpm increases, stays constant throughout the graph
+  - In other words, the residual standard deviation is constant throughout all races
+TODO: Assumptions
+
+These assumptions will be further explored in later parts of this report, specifically in data exploration.
+
+### Approach
+
+Using our data set, we draw a regression line relative to wpm and game_number and find the slope and intercept for each racer. Afterwards, we then calculate the estimate improvement of a racer relative to their starting wpm. To calculate their estimated wpm, we can use   
+
+$$
+wpm = game\_num * slope + intercept \\
+f(x) = x * m + b
+$$
+
+To calculate their improvement relative to their estimated wpm, we can find the difference between their first estimated wpm and last race estimated wpm and then divide that by their first estimated wpm:
+
+$$
+imp = \dfrac{f(final\_game\_num) - f(first\_game\_num)}{f(first\_game\_num)} \\
+= \dfrac{f(n) - f(0)}{f(0)} \\
+= \dfrac{n * m + b - b}{b} \\
+= \dfrac{n * m}{b}
+$$
+
+Below is a list of the racer, along with total races typed and their improvement proportional to their starting estimated wpm:
+
+```{r echo=FALSE}
+data = read_csv("./all_races.csv")
+
+improvement = data %>% 
+  # lm y ~ x will produce summary table of intercept and slope
+  # We grab the slope of game_num to wpm and store in the imp column
+  group_by(name) %>% 
+  mutate(
+    b = coef(lm(wpm ~ game_num))[1], 
+    m = coef(lm(wpm ~ game_num))[2]
+  ) %>% 
+  group_by(name) %>% 
+  summarize(n = n(), imp = n * m / b) %>% 
+  distinct() %>% 
+  ungroup()
+
+head(improvement)
+```
+
+### General Summaries
+
+TODO: General summary table
+
+#### Distribution of WPM Improvement
+
+This graph provides key evidence for the question of whether typing has improved over the span of each individual's races, as it shows the percent improvement in their estimated starting wpm and ending wpm in a linear regression. The violin plot combined with the jittered points shows most improvement falling between 0 and 50% at around 20%. The distribution is right skewed relative to improvement, as there are some in the distribution that show significantly more relative wpm improvement at around 50 - 150%.
+
+```{r echo=FALSE}
+ggplot(improvement, aes(x = 0, y = imp * 100)) +
+  geom_violin() +
+  geom_jitter() +
+  ggtitle("Estimated Word Per Minute Improvement for Moderate Typeracer Users", subtitle = "2500 - 3000 races, 500 min texts, relative difference between estimated end and start wpm") +
+  ylab("Improvement (%)") +
+  xlab("") +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.ticks.x = element_blank(),
+    axis.text.x = element_blank())
+```
+
+### Data Exploration and Mutation
+
+#### Heteroscedasticity
+
+Since we're doing a regression model for each typist, we must assume that, across the line, the mean of the residuals is 0 and the variation is constant.
+
+First, we provide an example of a typist's improvement in general. Here, we grab a specific user from our data to graph their improvement with a sample regression line.
+
+```{r echo=FALSE}
+sample_chart = data %>% 
+  filter(name == "ulmaa")
+
+ggplot(sample_chart, aes(x = game_num, y = wpm)) + 
+  geom_jitter() +
+  geom_smooth(method = "lm", se = FALSE) +
+  xlab("Number of Races") +
+  ylab("Typing Speed (Words Per Minute)") +
+  ggtitle("Typing Improvement over Number of Races", subtitle = "Racer Ulmaa")
+```
+
+From observing this graph, we see that there is a bit of heteroscedasticity. As the the typist increases in their number of races, it seems like there is more variation in their words per minute. Therefore, the variation over the regression line is not constant. For the sake of this analysis, we'll just assume this to be not the case.
+
+Next, we look at the residual plots for this sample racer after fitting a linear regression model. Here, we calculate the m and b described in the LaTeX up top, but we subtract from the true wpm, finding the residual of the graph.
+
+```{r echo=FALSE}
+sample_chart %>% 
+  mutate(
+      b = coef(lm(wpm ~ game_num))[1], 
+      m = coef(lm(wpm ~ game_num))[2]
+    ) %>% 
+  mutate(
+    res = wpm - (game_num * m + b)
+  ) %>% 
+  select(game_num, res) %>% 
+  ggplot(aes(x = game_num, y = res)) +
+    geom_jitter() +
+    geom_hline(yintercept = 0, color = "red") +
+    xlab("Number of Races") +
+    ylab("Residuals (Words Per Minute)") +
+    ggtitle("Regression Model Residuals for Typing Speed Over Races", subtitle = "Racer Ulmaa")
+```
+
+Here, the graph highlights that our second assumption seems to hold true - the mean across the graph is about 0. The graph doesn't appear to show significant skewedness throughout the entirely of the curve. Again, heteroscedasticity is present in the graph.
+
+Since there is only slight heteroscedastcity and the methods to factor this impact is outside of the scope of this course, we will assume that these conditions for linear regression hold.
+
+#### Hiatuses and Time Breaks 
+
+TODO: Hiatus
+
+### Hypothesis Test and Confidence Interval
+
+Again, our question focused on how typists experience typing improvement over the span of races. We perform a one-sample, two-tailed hypothesis test to test our question.
+
+#### Population and Sample
+- The population is typists on typeracer who have between 2500-3000 races and at least 500 texts logged.
+- The sample is the 100 typists randomly sampled out of the ~1.6k
+
+#### Parameters
+- We are looking at the improvement of a typist relative to their estimated wpm, so:
+- $\mu$ is the mean improvement
+- $\sigma$ is the standard deviation of this improvement
+
+#### Statistical Model
+- improvements for each typist are $x_1,\dots,x_n$ for $n = 100$
+- Model these times as a random sample from the larger population
+  - $F$ is the unspeified distribution
+  - $\mu$ be the mean
+  - $\sigma$ be the standard deviation
+
+#### Hypothesis
+$$
+H_0: \mu = 0 \\
+H_a: \mu > 0
+$$
+
+#### Test Statistic
+- Standardize the sample mean and compare it to a known distribution
+$$
+T = \frac{\bar{X} - \mu}{s / \sqrt{n}} \sim t(n-1)
+$$
+- where $t(n-1)$ is a $t$ distribution with $n-1$ degrees of freedom
+
+```{r echo=FALSE}
+imp_sum = improvement %>% 
+  summarize(n = n(),
+            xbar = mean(imp),
+            s = sd(imp)) %>% 
+  mutate(t_stat = (xbar - 0) / (s / sqrt(n)))
+
+imp_sum
+
+t_stat = imp_sum %>% pull(t_stat)
+
+t_stat
+  
+```
+
+TODO: Confidence Interval
+
+## Discussion
+
+### Interpreting Results
+
+There is overwhelming evidence that the mean improvement, by proportion, for a typist relative to their starting estimated wpm over races is greater than 0 (p is 1, one-sided t-test, df=99).
+
+In other words, there is overwhelming experience that a typist, based on their starting estimated wpm, experienced improvement over races.
+
+TODO: Analyze confidence interval
+
+### Future Options for Analysis
+
+While this study has provided us with evidence showing the positive correlation of typing improvement over a certain span of races, it also provides the opportunity for future analysis of typeracer efficacy in different aspects. For example, one could explore the ways in which overall time spent on typeracer correlates to typing speed improvement. In exploring this analysis, one would be able to focus more on the overall typing time and and focus less on the typing race density. In addition, one could perform an analysis on the ways in which text length impacts typing. It is commonly held that typing for a longer period of time will in-turn make a typist type “worse,” this analysis would provide the opportunity to see if this is true within the context of a typing software, such as typeracer. This data set provides the opportunity to explore a multitude of relationships between different typing factors.
+
+TODO: The range of improvement for individual players - What to expect as the norm
+
+### Potential Shortcomings
+
+TODO: Unable to identify if there will truly be progress regarding the times played. (we don't have the data)
+
+TODO: Weak players might give up early thus: weak player -> few times, strong player -> lots of times played, and this makes the graph linear in the other mechanism
