@@ -1,5 +1,10 @@
 unnamed-chunk-1	%>%	~	b	coef	distinct	group_by	head	lm	m	mutate	n	name	read_csv	summarize	ungroup
-unnamed-chunk-2	aes	element_blank	geom_jitter	geom_violin	ggplot	ggtitle	imp	improvement	theme	xlab	ylab
-unnamed-chunk-3	%>%	==	aes	data	filter	game_num	geom_jitter	geom_smooth	ggplot	ggtitle	name	wpm	xlab	ylab
-unnamed-chunk-4	%>%	~	aes	b	coef	game_num	geom_hline	geom_jitter	ggplot	ggtitle	lm	m	mutate	res	sample_chart	select	wpm	xlab	ylab
-unnamed-chunk-5	%>%	imp	improvement	mean	mutate	n	pull	s	sd	sqrt	summarize	xbar
+unnamed-chunk-2	%>%	accuracy	data	max	mean	min	racers_num	summarize	wpm
+unnamed-chunk-3	%>%	imp	improvement	max	mean	min	n	summarize
+unnamed-chunk-4	%>%	aes	as.factor	count	data	geom_col	geom_text	ggplot	ggtitle	group_by	mean	mean_wpm	n	racers_num	round	str_c	summarize	wpm	xlab	ylab
+unnamed-chunk-5	aes	element_blank	geom_jitter	geom_violin	ggplot	ggtitle	imp	improvement	theme	xlab	ylab
+unnamed-chunk-6	%>%	==	aes	data	filter	game_num	geom_jitter	geom_smooth	ggplot	ggtitle	name	wpm	xlab	ylab
+unnamed-chunk-7	%>%	~	aes	b	coef	game_num	geom_hline	geom_jitter	ggplot	ggtitle	lm	m	mutate	res	sample_chart	select	wpm	xlab	ylab
+unnamed-chunk-8	
+unnamed-chunk-9	%>%	imp	improvement	pull	t.test
+unnamed-chunk-10	
