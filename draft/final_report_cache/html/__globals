@@ -1,0 +1,10 @@
+unnamed-chunk-1	read_csv
+unnamed-chunk-2	%>%	==	aes	data	filter	game_num	geom_jitter	geom_smooth	ggplot	ggtitle	name	wpm	xlab	ylab
+unnamed-chunk-3	%>%	~	aes	b	coef	game_num	geom_hline	geom_jitter	ggplot	ggtitle	lm	m	mutate	res	sample_chart	select	wpm	xlab	ylab
+unnamed-chunk-4	$	aes	geom_density	geom_norm_density	ggplot	ggtitle	mean	res	residuals	sd	xlab	ylab
+unnamed-chunk-5	%>%	~	b	c	coef	data	distinct	group_by	head	kable	kable_styling	lm	m	mutate	n	name	summarize	ungroup
+unnamed-chunk-6	%>%	accuracy	c	data	kable	kable_styling	max	mean	min	racers_num	summarize	wpm
+unnamed-chunk-7	%>%	c	imp	improvement	kable	kable_styling	max	mean	min	n	summarize
+unnamed-chunk-8	aes	element_blank	geom_jitter	geom_violin	ggplot	ggtitle	imp	improvement	theme	xlab	ylab
+unnamed-chunk-9	%>%	imp	improvement	pull	t.test
+unnamed-chunk-10	

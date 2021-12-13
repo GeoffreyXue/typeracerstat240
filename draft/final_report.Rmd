@@ -375,5 +375,5 @@ There are several potential shortcomings with our analysis. We've highlighted so
 
 ## References
 
-[^1]: [typeracer.com](https://typeracer.com)
-[^2]: [typeracerdata.com](https://typeracerdata.com/leaders)
+[^1]: “The Global Typing Competition.” TypeRacer, TeachMe, 2008, [https://play.typeracer.com/](https://play.typeracer.com/). 
+[^2]: Horn, Noah. TypeRacer Data, Sean Wrona, Michael Deroche, [https://typeracerdata.com/](https://typeracerdata.com/). 
